@@ -328,6 +328,28 @@ namespace XLabs.Forms.Controls
 		}
 
 		#endregion
+		
+		#region Events
+
+        	public class ButtonGroupItemClickedEventArgs : EventArgs
+        	{
+            		public int SelectedItemIndex { get; set; }
+        	}
+
+        	public delegate void ButtonGroupItemClickedDelegate(object sender,ButtonGroupItemClickedEventArgs args);
+
+        	public event ButtonGroupItemClickedDelegate OnButtonGroupItemClickedEvent;
+
+        	private void InvokeButtonGroupItemClicked(EventArgs e)
+        	{
+            		var ev = OnButtonGroupItemClickedEvent;
+            		if(ev == null)
+                		return;
+            		ev(this, new ButtonGroupItemClickedEventArgs{ SelectedItemIndex = this.SelectedIndex });
+        	}
+
+        	#endregion
+
 
 		/// <summary>
 		/// The clicked command
@@ -378,6 +400,9 @@ namespace XLabs.Forms.Controls
 				Command = _clickedCommand,
 				CommandParameter = _buttonLayout.Children.Count,
 			};
+			
+		        button.Clicked += (sender, e) =>
+                		InvokeButtonGroupItemClicked(e);
 
 			if (IsNumber)
 			{
